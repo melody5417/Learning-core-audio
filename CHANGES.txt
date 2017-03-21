@@ -1,0 +1,80 @@
+CHANGES for "Learning Core Audio: A Hands-On Guide to Audio Programming for Mac and iOS" sample code
+
+January 23, 2013
+
+CH06_AudioConverter/
+	main.c
+--------------------
+After line 205, added
+	free (outputBuffer);
+to release memory that was malloc()ed on line 163.	
+(thanks Matt Daugherty)
+
+CH07_AUGraphSpeechSynthesis/
+	main.c
+----------------------------
+After line 196, added
+	DisposeAUGraph(player.graph);
+to release the AUGraph.
+(thanks Seth Willits)
+
+CH08_AUGraphInput/
+	main.cpp
+------------------
+Changed line 58 from:
+	if ((player->firstOutputSampleTime > 0.0) &&
+to
+	if ((player->firstOutputSampleTime > -1.0) &&
+
+Changed line 104 from:
+	if ((player->firstInputSampleTime > 0.0) &&
+to
+	if ((player->firstInputSampleTime > -1.0) &&
+to properly check against the -1 flag value that is set on these counters before they're first used (see the -1 initializations on lines 481 and 320, respectively).
+(thanks Ron Lee)
+
+CH08_AUGraphInput/
+	CH08_AUGraphInput.xcodeproj
+-------------------------------
+The project's references to the CARingBuffer.h and CARingBuffer.cpp files now uses an absolute reference to the /Library/Developer/CoreAudio/PublicUtility folder, which is their expected location as of Xcode 4.5 and up. Search Xcode documentation for "Core Audio Utility Classes", a pseudo sample code project, for the latest version of these classes. The Readme.rtf supplied with the classes indicates that this is their new expected path (replacing /Developer/Extras/CoreAudio/PublicUtility, where they were automatically installed prior to Xcode 4.3, and where the book describes them being).
+
+
+August 29, 2012:
+
+All projects:
+-------------
+Now that Xcode 4.4 has dropped support for OS X 10.6 as a base SDK, we have updated all the OS X project files to build for the OS X 10.7 SDK. The deployment target is still 10.6. iOS projects are still "Latest iOS", and work on iOS 5.1, the current public version as of this writing.
+
+CH02_CAToneFileGenerator/
+		main.m
+-------------------------		
+Changed line 106 from:
+	NSLog (@"wrote %ld samples", sampleCount);
+to
+	NSLog (@"wrote %ld samples", sampleCount);
+to match the bit-depth of the sampleCount argument
+(thanks "jarryd")
+
+
+CH07_AUGraphSineWave/
+		main.c
+----------------------
+Changed line 96 from:
+	input.inputProcRefCon = &player;
+to
+	input.inputProcRefCon = player;
+to correct the pointer type of player, and eliminate a crash when the sleep() exits.
+(thanks Stefan Frauenfelder and Dmitri Kharlamov)
+
+
+CH10_iOSBackgroundingTone/
+		CH10_iOSBackgroundingToneAppDelegate.m
+-----------------------------------------------		
+Changed line 63 from:
+	(data)[frame] = (SInt16) (sin (2 * M_PI * (j / cycleLength)) * 0x8000);
+to
+	(data)[frame] = (SInt16) (sin (2 * M_PI * (j / cycleLength)) * SHRT_MAX);
+to eliminate malformed waves at certain frequencies / sample rates.
+(thanks Markus Boigner)
+
+
